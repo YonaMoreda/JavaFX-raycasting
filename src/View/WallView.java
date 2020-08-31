@@ -18,12 +18,13 @@ public class WallView extends Rectangle {
         setFill(Color.GRAY);
     }
 
-    //TODO:: ROTATATIONS NEED TO BE TAKEN INTO ACCOUNT
+    //TODO:: ROTATIONS NEED TO BE TAKEN INTO ACCOUNT
     public Line getLeftSide() {
         return new Line(getX(), getY(), getX(), getY() + getHeight());
     }
 
     public Line getTopSide() {
+        System.out.println(new Line(getX(), getY(), getX() + getWidth(), getY()));
         return new Line(getX(), getY(), getX() + getWidth(), getY());
     }
 

@@ -25,4 +25,8 @@ public class Vector2D {
     public void setY(double y) {
         this.y = y;
     }
+    @Override
+    public String toString() {
+        return new String("x: " + x + ", y: " + y);
+    }
 }

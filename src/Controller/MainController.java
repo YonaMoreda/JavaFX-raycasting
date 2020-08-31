@@ -23,14 +23,24 @@ public class MainController {
         pane_width = anchor_pane.getPrefWidth();
         pane_height = anchor_pane.getPrefHeight();
 
-        RayView rayView = new RayView(new Vector2D(100, 200), new Vector2D(1, 0), 30);
+        RayView rayView = new RayView(new Vector2D(0, 0), new Vector2D(1, 0), 30);
         WallView wallView = new WallView(pane_width / 2, pane_height / 2);
-        Vector2D intersectPoint = rayView.cast(wallView);
-        System.out.println(intersectPoint.getX());
-        rayView.setEndX(intersectPoint.getX());
-        rayView.setEndY(intersectPoint.getY());
+
+//        rayView.setEndX(intersectPoint.getX());
+//        rayView.setEndY(intersectPoint.getY());
         anchor_pane.getChildren().add(rayView);
         anchor_pane.getChildren().add(wallView);
+
+        anchor_pane.setOnMouseMoved(mouseEvent -> {
+            rayView.setEndX(mouseEvent.getX());
+            rayView.setEndY(mouseEvent.getY());
+            Vector2D intersectPoint = rayView.cast(wallView);
+            if(intersectPoint != null) {
+                System.out.println("Intersect point: " + intersectPoint.toString());
+            }
+//            rayView.setEndX(intersectPoint.getX());
+//            rayView.setEndY(intersectPoint.getY());
+        });
 
 //        createRays();
 //        anchor_pane.setOnMouseMoved(mouseEvent -> {
