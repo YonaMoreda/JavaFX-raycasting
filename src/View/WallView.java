@@ -9,11 +9,11 @@ import javafx.scene.shape.Rectangle;
 public class WallView extends Rectangle {
 
     public WallView() {
-        this(0, 0);
+        this(0, 0, 140, 30);
     }
 
-    public WallView(double x, double y) {
-        super(x, y, 140, 30);
+    public WallView(double x, double y, double width, double height) {
+        super(x, y, width, height);
         setStroke(Color.BLACK);
         setFill(Color.GRAY);
     }
@@ -24,7 +24,6 @@ public class WallView extends Rectangle {
     }
 
     public Line getTopSide() {
-        System.out.println(new Line(getX(), getY(), getX() + getWidth(), getY()));
         return new Line(getX(), getY(), getX() + getWidth(), getY());
     }
 

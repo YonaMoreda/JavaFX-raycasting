@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MainController {
 
@@ -18,28 +19,38 @@ public class MainController {
     private double pane_width;
     private double pane_height;
 
+    private ArrayList<WallView> walls;
+
     @FXML
     public void initialize() {
         pane_width = anchor_pane.getPrefWidth();
         pane_height = anchor_pane.getPrefHeight();
+        walls = new ArrayList<>();
+
+        Random rand = new Random();
 
         RayView rayView = new RayView(new Vector2D(0, 0), new Vector2D(1, 0), 30);
-        WallView wallView = new WallView(pane_width / 2, pane_height / 2);
 
-//        rayView.setEndX(intersectPoint.getX());
-//        rayView.setEndY(intersectPoint.getY());
-        anchor_pane.getChildren().add(rayView);
-        anchor_pane.getChildren().add(wallView);
+        for (int i = 0; i < 10; i++) {
+            WallView wallView = new WallView(rand.nextDouble() * pane_width, rand.nextDouble() * pane_height, rand.nextDouble() * 200, rand.nextDouble() * 50);
+            walls.add(wallView);
+            anchor_pane.getChildren().add(wallView);
+        }
+
+        anchor_pane.getChildren().add(rayView); //create rays
+
 
         anchor_pane.setOnMouseMoved(mouseEvent -> {
             rayView.setEndX(mouseEvent.getX());
             rayView.setEndY(mouseEvent.getY());
-            Vector2D intersectPoint = rayView.cast(wallView);
-            if(intersectPoint != null) {
-                System.out.println("Intersect point: " + intersectPoint.toString());
+            for (WallView wallView : walls) {
+                Vector2D intersectPoint = rayView.cast(wallView);
+                if (intersectPoint != null) {
+//                System.out.println("Intersect point: " + intersectPoint.toString());
+                    rayView.setEndX(intersectPoint.getX());
+                    rayView.setEndY(intersectPoint.getY());
+                }
             }
-//            rayView.setEndX(intersectPoint.getX());
-//            rayView.setEndY(intersectPoint.getY());
         });
 
 //        createRays();

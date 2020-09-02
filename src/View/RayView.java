@@ -40,42 +40,42 @@ public class RayView extends Line {
     }
 
     private boolean isInBetween(double pt, double a, double b) {
-        System.out.println("pt: " + pt + ", a: " + a + ", b: " + b);
-        if(a <= pt && pt <= b) {
+//        System.out.println("pt: " + pt + ", a: " + a + ", b: " + b);
+        if (a <= pt && pt <= b) {
             return true;
         }
-        if(a >= pt && pt >= b) {
+        if (a >= pt && pt >= b) {
             return true;
         }
         return false;
     }
 
     public Tuple<Vector2D, Double> intersects(Line line) {
-        double x1 = this.getStartX();
-        double y1 = this.getStartY();
-        double x2 = this.getEndX();
-        double y2 = this.getEndY();
+        double x1 = this.getStartX();   // 0
+        double y1 = this.getStartY();   // 0
+        double x2 = this.getEndX();     // 400
+        double y2 = this.getEndY();     // 250
 
-        double x3 = line.getStartX();
-        double y3 = line.getStartY();
-        double x4 = line.getEndX();
-        double y4 = line.getEndY();
+        double x3 = line.getStartX();   // 300
+        double y3 = line.getStartY();   // 200
+        double x4 = line.getEndX();     // 440
+        double y4 = line.getEndY();     // 200
 
-        double denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        double denominator = ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4));
 
-        if (denominator < 0) {
+        if (denominator == 0) {
             return null;
         }
         double numerator = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4);
+        double numeratorU = (x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3);
         double t = numerator / denominator;
-
-        if (t < 0 || t > 1) {
+        double u = -numeratorU / denominator;
+        if (t < 0 || t > 1 || u < 0 || u > 1) {
             return null;
         }
         double intersectPointX = x1 + t * (x2 - x1);
         double intersectPointY = y1 + t * (y2 - y1);
-        if(!(isInBetween(intersectPointX, x3, x4) && isInBetween(intersectPointY, y3, y4))) {
-            System.out.println("not inbetween, Rturn null");
+        if (!(isInBetween(intersectPointX, x3, x4) && isInBetween(intersectPointY, y3, y4))) {
             return null;
         }
         return new Tuple<>(new Vector2D(intersectPointX, intersectPointY), t);
@@ -100,7 +100,7 @@ public class RayView extends Line {
         Tuple<Vector2D, Double> intersectPointRight = intersects(wallView.getRightSide());
         Tuple<Vector2D, Double> intersectPointBottom = intersects(wallView.getBottomSide());
         Tuple<Vector2D, Double> intersectPoint = min(min(min(intersectPointLeft, intersectPointTop), intersectPointRight), intersectPointBottom);
-        if(intersectPoint == null) {
+        if (intersectPoint == null) {
             return null;
         }
         return intersectPoint.x;
