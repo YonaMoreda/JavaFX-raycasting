@@ -1,7 +1,5 @@
 package View;
 
-
-import Model.Vector2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;

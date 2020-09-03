@@ -8,19 +8,32 @@ public class RayView extends Line {
 
     private Vector2D position;
     private Vector2D direction;
+    private final Vector2D initialStartPoint;
+    private final Vector2D initialEndPoint;
 
     public RayView() {
         this(new Vector2D(0, 0), new Vector2D(1, 0), 40);
     }
 
-    public RayView(Vector2D position, Vector2D direction, double t) {
+    public RayView(Vector2D position, Vector2D direction, double length) {
         this.position = position;
         this.direction = direction;
 
         this.setTranslateX(position.getX());
         this.setTranslateY(position.getY());
-        this.setEndX(position.getX() + direction.getX() * t);
-        this.setEndY(position.getY() + direction.getY() * t);
+        this.setEndX(position.getX() + direction.getX() * length);
+        this.setEndY(position.getY() + direction.getY() * length);
+
+        this.initialStartPoint = new Vector2D(position.getX(), position.getY());
+        this.initialEndPoint = new Vector2D(position.getX() + direction.getX() * length, position.getY() + direction.getY() * length);
+    }
+
+    public Vector2D getInitialStartPoint() {
+        return initialStartPoint;
+    }
+
+    public Vector2D getInitialEndPoint() {
+        return initialEndPoint;
     }
 
     public Vector2D getPosition() {
@@ -40,7 +53,6 @@ public class RayView extends Line {
     }
 
     private boolean isInBetween(double pt, double a, double b) {
-//        System.out.println("pt: " + pt + ", a: " + a + ", b: " + b);
         if (a <= pt && pt <= b) {
             return true;
         }
@@ -75,9 +87,6 @@ public class RayView extends Line {
         }
         double intersectPointX = x1 + t * (x2 - x1);
         double intersectPointY = y1 + t * (y2 - y1);
-        if (!(isInBetween(intersectPointX, x3, x4) && isInBetween(intersectPointY, y3, y4))) {
-            return null;
-        }
         return new Tuple<>(new Vector2D(intersectPointX, intersectPointY), t);
     }
 
@@ -99,6 +108,7 @@ public class RayView extends Line {
         Tuple<Vector2D, Double> intersectPointTop = intersects(wallView.getTopSide());
         Tuple<Vector2D, Double> intersectPointRight = intersects(wallView.getRightSide());
         Tuple<Vector2D, Double> intersectPointBottom = intersects(wallView.getBottomSide());
+
         Tuple<Vector2D, Double> intersectPoint = min(min(min(intersectPointLeft, intersectPointTop), intersectPointRight), intersectPointBottom);
         if (intersectPoint == null) {
             return null;
