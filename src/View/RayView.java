@@ -10,6 +10,7 @@ public class RayView extends Line {
     private Vector2D direction;
     private final Vector2D initialStartPoint;
     private final Vector2D initialEndPoint;
+    private double length;
 
     public RayView() {
         this(new Vector2D(0, 0), new Vector2D(1, 0), 40);
@@ -19,8 +20,9 @@ public class RayView extends Line {
         this.position = position;
         this.direction = direction;
 
-        this.setTranslateX(position.getX());
+        this.setTranslateX(position.getX()); //FIXME:: <- REMOVE THIS?
         this.setTranslateY(position.getY());
+        this.length = length;
         this.setEndX(position.getX() + direction.getX() * length);
         this.setEndY(position.getY() + direction.getY() * length);
 
@@ -50,6 +52,9 @@ public class RayView extends Line {
 
     public void setDirection(Vector2D direction) {
         this.direction = direction;
+        this.setEndX(this.getStartX() + direction.getX() * length);
+        this.setEndY(this.getStartY() + direction.getY() * length);
+        //TODO:: DOES initialStartPoint and initialEndPoint have to be taken into account?
     }
 
     private boolean isInBetween(double pt, double a, double b) {
@@ -114,5 +119,13 @@ public class RayView extends Line {
             return null;
         }
         return intersectPoint.x;
+    }
+
+    public double getEuclideanLength() {
+        return Math.sqrt(Math.pow(getStartX() - getEndX(), 2) + Math.pow(getStartY() - getEndY(), 2));
+    }
+
+    public double getProjectedLength() {
+        return Math.abs(getStartX() - getEndX());
     }
 }
