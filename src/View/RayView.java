@@ -8,8 +8,8 @@ public class RayView extends Line {
 
     private Vector2D position;
     private Vector2D direction;
-    private final Vector2D initialStartPoint;
-    private final Vector2D initialEndPoint;
+    private Vector2D initialStartPoint;
+    private Vector2D initialEndPoint;
     private double length;
 
     public RayView() {
@@ -54,17 +54,15 @@ public class RayView extends Line {
         this.direction = direction;
         this.setEndX(this.getStartX() + direction.getX() * length);
         this.setEndY(this.getStartY() + direction.getY() * length);
-        //TODO:: DOES initialStartPoint and initialEndPoint have to be taken into account?
+        this.initialStartPoint = new Vector2D(position.getX(), position.getY());
+        this.initialEndPoint = new Vector2D(position.getX() + direction.getX() * length, position.getY() + direction.getY() * length);
     }
 
     private boolean isInBetween(double pt, double a, double b) {
         if (a <= pt && pt <= b) {
             return true;
         }
-        if (a >= pt && pt >= b) {
-            return true;
-        }
-        return false;
+        return a >= pt && pt >= b;
     }
 
     public Tuple<Vector2D, Double> intersects(Line line) {
@@ -127,5 +125,19 @@ public class RayView extends Line {
 
     public double getProjectedLength() {
         return Math.abs(getStartX() - getEndX());
+    }
+
+    public void translateStartEndPointsFromInitial(double x, double y) {
+        this.setStartX(initialStartPoint.getX() + x);
+        this.setStartY(initialStartPoint.getY() + y);
+        this.setEndX(initialEndPoint.getX() + x);
+        this.setEndY(initialEndPoint.getY() + y);
+    }
+
+    public void translateStartEndPoints(double x, double y) {
+        this.setStartX(this.getStartX() + x);
+        this.setStartY(this.getStartY() + y);
+        this.setEndX(this.getEndX() + x);
+        this.setEndY(this.getEndY() + y);
     }
 }

@@ -39,25 +39,8 @@ public class MainController {
         createWalls();
         createRays();
         handleAnchorPaneOnMouseMoved();
-        handleAnchorPaneOnKeyPressed();
         populateRenderHBox();
         render_HBox.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-    }
-
-    private void handleAnchorPaneOnKeyPressed() {
-//        anchor_pane.setOnKeyPressed(keyEvent -> {
-//            System.out.println("HM");
-//            switch (keyEvent.getCode()) {
-//                case A -> {
-//                    System.out.println("LEFT PRESSED");
-//                    rotateRays(-Math.PI / 180);
-//                }
-//                case RIGHT -> rotateRays(Math.PI / 180);
-//            }
-//        });
-        anchor_pane.setOnMouseClicked(keyEvent -> {
-            rotateRays(-Math.PI / 180);
-        });
     }
 
     private void populateRenderHBox() {
@@ -73,35 +56,39 @@ public class MainController {
 
     private void handleAnchorPaneOnMouseMoved() {
         anchor_pane.setOnMouseMoved(mouseEvent -> {
-            int rayIndex = 0;
-            for (RayView rayView : rayViews) {
-                rayView.setStartX(rayView.getInitialStartPoint().getX() + mouseEvent.getX());
-                rayView.setStartY(rayView.getInitialStartPoint().getY() + mouseEvent.getY());
-                rayView.setEndX(rayView.getInitialEndPoint().getX() + mouseEvent.getX());
-                rayView.setEndY(rayView.getInitialEndPoint().getY() + mouseEvent.getY());
-
-                rayViews.set(rayIndex, rayView);
-                Rectangle rectangleSlice = (Rectangle) render_HBox.getChildren().get(rayIndex);
-                boolean thereIsIntersection = false;
-                for (WallView wallView : walls) {
-                    Vector2D intersectPoint = rayView.cast(wallView);
-                    if (intersectPoint != null) {   // there is a hit
-                        thereIsIntersection = true;
-                        rayView.setEndX(intersectPoint.getX());
-                        rayView.setEndY(intersectPoint.getY());
-
-                        rayViews.set(rayIndex, rayView);
-
-                    }
-                }
-                if (thereIsIntersection) {
-                    rectangleSlice.setHeight(20000 / rayView.getProjectedLength());
-                } else {
-                    rectangleSlice.setHeight(0);
-                }
-                rayIndex++;
-            }
+            renderRayIntersections(mouseEvent.getX(), mouseEvent.getY(), true);
         });
+    }
+
+    private void renderRayIntersections() {
+        renderRayIntersections(0, 0, false);
+    }
+
+    private void renderRayIntersections(double x, double y, boolean flag) {
+        int rayIndex = 0;
+        for (RayView rayView : rayViews) {
+            if (flag) {
+                rayView.translateStartEndPointsFromInitial(x, y);
+                rayViews.set(rayIndex, rayView);
+            }
+            Rectangle rectangleSlice = (Rectangle) render_HBox.getChildren().get(rayIndex);
+            boolean thereIsIntersection = false;
+            for (WallView wallView : walls) {
+                Vector2D intersectPoint = rayView.cast(wallView);
+                if (intersectPoint != null) {   // there is a hit
+                    thereIsIntersection = true;
+                    rayView.setEndX(intersectPoint.getX());
+                    rayView.setEndY(intersectPoint.getY());
+                    rayViews.set(rayIndex, rayView);
+                }
+            }
+            if (thereIsIntersection) {
+                rectangleSlice.setHeight(20000 / rayView.getProjectedLength());
+            } else {
+                rectangleSlice.setHeight(0);
+            }
+            rayIndex++;
+        }
     }
 
     private void createWalls() {
@@ -136,11 +123,31 @@ public class MainController {
     }
 
     private void rotateRays(double angle) {
-//        System.out.println("TODO:: TO BE IMPLEMENTED");
         for (int i = 0; i < numberOfRays; i++) {
             RayView rayView = rayViews.get(i);
-            rayView.setDirection(new Vector2D(Math.cos(Math.acos(rayView.getDirection().getX()) + angle), Math.sin(Math.asin(rayView.getDirection().getY()) + angle)));
+            double oldAngle = Math.atan2(rayView.getDirection().getY(), rayView.getDirection().getX());
+            rayView.setDirection(new Vector2D(Math.cos(angle + oldAngle), Math.sin(angle + oldAngle)));
             rayViews.set(i, rayView);
         }
     }
+
+    public void anchor_pane_key_pressed(KeyEvent keyEvent) {
+        switch (keyEvent.getCode()) {
+            case LEFT, A -> rotateRays(-3 * Math.PI / 180);
+            case RIGHT, D -> rotateRays(3 * Math.PI / 180);
+            case UP, W -> translateStartEndPointsRays(0, 10);
+            case DOWN, S -> translateStartEndPointsRays(0, -10);
+        }
+        renderRayIntersections();
+    }
+
+    private void translateStartEndPointsRays(double x, double y) {
+
+        for (int i = 0; i < numberOfRays; i++) {
+            RayView rayView = rayViews.get(i);
+            rayView.translateStartEndPoints(x, y);
+            rayViews.set(i, rayView);
+        }
+    }
+
 }
