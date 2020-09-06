@@ -12,24 +12,49 @@ public class WallView extends Rectangle {
 
     public WallView(double x, double y, double width, double height) {
         super(x, y, width, height);
-        setStroke(Color.BLACK);
-        setFill(Color.GRAY);
+        setStroke(Color.GRAY);
+        setStrokeWidth(5);
+        setFill(Color.DARKGRAY);
+//        setRotate(10);
+    }
+
+    private double centerToCornerDistance() {
+        return Math.sqrt(Math.pow(getWidth(), 2) + Math.pow(getHeight(), 2)) / 2;
     }
 
     //TODO:: ROTATIONS NEED TO BE TAKEN INTO ACCOUNT
     public Line getLeftSide() {
-        return new Line(getX(), getY(), getX(), getY() + getHeight());
+        Line line = new Line(getX(), getY(), getX(), getY() + getHeight());
+        line.setRotate(getRotate());
+        return line;
     }
 
+
     public Line getTopSide() {
-        return new Line(getX(), getY(), getX() + getWidth(), getY());
+//        double r = centerToCornerDistance();
+//        double x = r * Math.cos(Math.toRadians(-getRotate()));
+//        double y = r * Math.sin(Math.toRadians(-getRotate()));
+//        Line line = new Line(getX() + x, getY() + y, getX() + getWidth() - x, getY() - y);
+//        line.setRotate(getRotate());
+        return new Line(getX(), getY(),getX() + getWidth(), getY());
     }
 
     public Line getRightSide() {
-        return new Line(getX() + getWidth(), getY(), getX() + getWidth(), getY() + getHeight());
+        Line line = new Line(getX() + getWidth(), getY(), getX() + getWidth(), getY() + getHeight());
+        line.setRotate(getRotate());
+        return line;
     }
 
     public Line getBottomSide() {
-        return new Line(getX(), getY() + getHeight(), getX() + getWidth(), getY() + getHeight());
+        Line line = new Line(getX(), getY() + getHeight(), getX() + getWidth(), getY() + getHeight());
+        line.setRotate(getRotate());
+        return line;
+    }
+
+    public boolean hasAxisAlignedCollision(WallView wallView) {
+        return getX() < wallView.getX() + wallView.getWidth() &&
+                getX() + getWidth() > wallView.getX() &&
+                getY() < wallView.getY() + wallView.getHeight() &&
+                getY() + getHeight() > wallView.getY();
     }
 }

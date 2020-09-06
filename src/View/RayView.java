@@ -11,20 +11,22 @@ public class RayView extends Line {
     private Vector2D initialStartPoint;
     private Vector2D initialEndPoint;
     private double length;
+    private double angleFromCameraView;
 
     public RayView() {
-        this(new Vector2D(0, 0), new Vector2D(1, 0), 40);
+        this(new Vector2D(0, 0), new Vector2D(1, 0), 40, 0);
     }
 
-    public RayView(Vector2D position, Vector2D direction, double length) {
-        this.position = position;
+    public RayView(Vector2D position, Vector2D direction, double length, double angleFromCameraView) {
+        this.position = position;       //origin
         this.direction = direction;
-
         this.setTranslateX(position.getX()); //FIXME:: <- REMOVE THIS?
-        this.setTranslateY(position.getY());
+        this.setTranslateY(position.getY()); //FIXME:: <- REMOVE THIS?
         this.length = length;
+        this.angleFromCameraView = angleFromCameraView;
         this.setEndX(position.getX() + direction.getX() * length);
         this.setEndY(position.getY() + direction.getY() * length);
+
 
         this.initialStartPoint = new Vector2D(position.getX(), position.getY());
         this.initialEndPoint = new Vector2D(position.getX() + direction.getX() * length, position.getY() + direction.getY() * length);
@@ -124,7 +126,7 @@ public class RayView extends Line {
     }
 
     public double getProjectedLength() {
-        return Math.abs(getStartX() - getEndX());
+        return getEuclideanLength() * Math.cos(angleFromCameraView);
     }
 
     public void translateStartEndPointsFromInitial(double x, double y) {
@@ -135,9 +137,10 @@ public class RayView extends Line {
     }
 
     public void translateStartEndPoints(double x, double y) {
-        this.setStartX(this.getStartX() + x);
-        this.setStartY(this.getStartY() + y);
-        this.setEndX(this.getEndX() + x);
-        this.setEndY(this.getEndY() + y);
+        setStartX(getStartX() + x);
+        setStartY(getStartY() + y);
+        position = new Vector2D(getStartX(), getStartY());
+        setEndX(position.getX() + direction.getX() * length);
+        setEndY(position.getY() + direction.getY() * length);
     }
 }

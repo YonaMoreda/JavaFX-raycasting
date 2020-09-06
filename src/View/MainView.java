@@ -15,7 +15,12 @@ public class MainView extends Application {
         Parent root = loader.load();
         primaryStage.setTitle("Ray casting");
         Scene scene = new Scene(root);
+
         scene.setOnKeyPressed(keyEvent -> {
+            MainController mainController = loader.getController();
+            mainController.anchor_pane_key_pressed(keyEvent);
+        });
+        scene.setOnKeyReleased(keyEvent -> {
             MainController mainController = loader.getController();
             mainController.anchor_pane_key_pressed(keyEvent);
         });
