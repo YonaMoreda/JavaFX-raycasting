@@ -85,8 +85,11 @@ public class MainController {
             }
             if (thereIsIntersection) {
                 rectangleSlice.setHeight(20000 / rayView.getProjectedLength());
-                int colorValue = (int) ((150) - rayView.getProjectedLength() * 150 / pane_width);
-                rectangleSlice.setFill(Color.rgb(colorValue, colorValue, colorValue));
+                int colorValue = (int) ((200) - rayView.getProjectedLength() * 200 / pane_width);
+                Stop[] stops = {new Stop(0, Color.grayRgb((int) (colorValue / 1.5))), new Stop(0.1, Color.grayRgb(colorValue)), new Stop(0.9, Color.grayRgb(colorValue)), new Stop(1, Color.grayRgb((int) (colorValue / 1.5)))};
+                LinearGradient lg = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
+                rectangleSlice.setFill(lg);
+//                rectangleSlice.setFill(Color.rgb(colorValue, colorValue, colorValue));
             } else {
                 rectangleSlice.setHeight(0);
             }
@@ -97,7 +100,7 @@ public class MainController {
     private void createWalls() {
         createBoundaryWalls();
         Random rand = new Random();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             WallView wallView = new WallView(rand.nextDouble() * pane_width, rand.nextDouble() * pane_height, 100 + rand.nextDouble() * 300, 50 + rand.nextDouble() * 50);
             while (collidesWithOtherWalls(wallView)) {
                 wallView = new WallView(rand.nextDouble() * pane_width, rand.nextDouble() * pane_height, 100 + rand.nextDouble() * 300, 50 + rand.nextDouble() * 50);
