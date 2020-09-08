@@ -22,10 +22,10 @@ public class MainView extends Application {
             MainController mainController = loader.getController();
             mainController.anchor_pane_key_pressed(keyEvent);
         });
-        scene.setOnKeyReleased(keyEvent -> {
-            MainController mainController = loader.getController();
-            mainController.anchor_pane_key_pressed(keyEvent);
-        });
+//        scene.setOnKeyReleased(keyEvent -> {
+//            MainController mainController = loader.getController();
+//            mainController.anchor_pane_key_pressed(keyEvent);
+//        });
         primaryStage.setScene(scene);
         primaryStage.show();
         scene.getRoot().requestFocus();

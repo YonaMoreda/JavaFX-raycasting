@@ -163,10 +163,26 @@ public class MainController {
     }
 
     private void translateStartEndPointsRays(double x, double y) {
-        for (int i = 0; i < numberOfRays; i++) {
-            RayView rayView = rayViews.get(i);
+
+//        for (int i = 0; i < rayViews.size(); i++) {
+//            RayView rayView = rayViews.get(i);
+
+//        RayView ray = new RayView(rayViews.get(0));
+//        ray.translateStartEndPoints(x, y);
+//
+//        for (WallView wallView : walls) {
+//            if (new WallView(ray.getStartX() - 5, ray.getStartY() - 5, 10, 10).hasAxisAlignedCollision(wallView)) {
+//                System.out.println("RETURNED");
+//                return;
+//            }
+//        }
+        int i = 0;
+        for (RayView rayView : rayViews) {
+//            RayView rayViewClone = new RayView(rayView);
             rayView.translateStartEndPoints(x, y);
+            System.out.println("Passed: " + rayView);
             rayViews.set(i, rayView);
+            i++;
         }
     }
 

@@ -13,8 +13,18 @@ public class RayView extends Line {
     private double length;
     private double angleFromCameraView;
 
+
     public RayView() {
         this(new Vector2D(0, 0), new Vector2D(1, 0), 40, 0);
+    }
+
+    public RayView(RayView rayView) {
+        this.position = rayView.position;
+        this.direction = rayView.direction;
+        this.initialStartPoint = rayView.initialStartPoint;
+        this.initialEndPoint = rayView.initialEndPoint;
+        this.length = rayView.length;
+        this.angleFromCameraView = rayView.angleFromCameraView;
     }
 
     public RayView(Vector2D position, Vector2D direction, double length, double angleFromCameraView) {
