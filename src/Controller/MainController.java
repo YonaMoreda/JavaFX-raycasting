@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.robot.Robot;
 import javafx.scene.shape.Rectangle;
 
 
@@ -40,11 +41,42 @@ public class MainController {
 
         createWalls();
         createRays();
-        handleAnchorPaneOnMouseMoved();
+//        handleAnchorPaneOnMouseMoved();
+        handleHBoxOnMouseMoved();
         populateRenderHBox();
         Stop[] stops = {new Stop(0, Color.BLACK), new Stop(0.5, Color.BLACK), new Stop(1, Color.DARKGRAY)};
         LinearGradient lg = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
         render_HBox.setBackground(new Background(new BackgroundFill(lg, null, null)));
+    }
+
+    double mousePrevX = -1;
+    double mousePrevY = -1;
+
+    private void handleHBoxOnMouseMoved() {
+        render_HBox.setOnMouseMoved(mouseEvent -> {
+            if (mousePrevX > mouseEvent.getX()) {
+                rotateRays(-1.2 * Math.PI / 180);
+            } else if (mousePrevX < mouseEvent.getX() && mousePrevX != -1) {
+                rotateRays(1.2 * Math.PI / 180);
+            }
+
+            mousePrevX = mouseEvent.getX();
+            renderRayIntersections();
+            //TODO:: IMPLEMENT CAMERA SHEARING
+        });
+        render_HBox.setOnMouseExited(mouseEvent -> {
+//            System.out.println(mouseEvent.getX() + ", " + mouseEvent.getY());
+            if (mouseEvent.getX() < 0.1) {
+                moveCursor(1760, 400);
+            } else {
+                moveCursor(960, 400);
+            }
+        });
+    }
+
+    public void moveCursor(int screenX, int screenY) {
+        Robot robot = new Robot();
+        robot.mouseMove(screenX, screenY);
     }
 
     private void populateRenderHBox() {
@@ -180,7 +212,7 @@ public class MainController {
         for (RayView rayView : rayViews) {
 //            RayView rayViewClone = new RayView(rayView);
             rayView.translateStartEndPoints(x, y);
-            System.out.println("Passed: " + rayView);
+//            System.out.println("Passed: " + rayView);
             rayViews.set(i, rayView);
             i++;
         }
