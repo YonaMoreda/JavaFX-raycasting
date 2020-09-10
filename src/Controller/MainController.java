@@ -186,10 +186,12 @@ public class MainController {
 
     public void anchor_pane_key_pressed(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
-            case LEFT, A -> rotateRays(-Math.PI / 180);
-            case RIGHT, D -> rotateRays(3 * Math.PI / 180);
+            case LEFT -> rotateRays(-1.5 * Math.PI / 180);
+            case RIGHT -> rotateRays(1.5 * Math.PI / 180);
             case UP, W -> translateStartEndPointsRays(10 * Math.cos(findCameraViewAngle()), 10 * Math.sin(findCameraViewAngle()));
             case DOWN, S -> translateStartEndPointsRays(-10 * Math.cos(findCameraViewAngle()), -10 * Math.sin(findCameraViewAngle()));
+            case A -> translateStartEndPointsRays(-3 * Math.cos(findCameraViewAngle() + Math.PI / 2), -3 * Math.sin(findCameraViewAngle() + Math.PI / 2));
+            case D -> translateStartEndPointsRays(3 * Math.cos(findCameraViewAngle() + Math.PI / 2), 3 * Math.sin(findCameraViewAngle() + Math.PI / 2));
         }
         renderRayIntersections();
     }
