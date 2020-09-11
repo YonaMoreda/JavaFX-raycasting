@@ -4,6 +4,7 @@ import View.RayView;
 import Model.Vector2D;
 import View.WallView;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -41,7 +42,6 @@ public class MainController {
 
         createWalls();
         createRays();
-//        handleAnchorPaneOnMouseMoved();
         handleHBoxOnMouseMoved();
         populateRenderHBox();
         Stop[] stops = {new Stop(0, Color.BLACK), new Stop(0.5, Color.BLACK), new Stop(1, Color.DARKGRAY)};
@@ -54,13 +54,21 @@ public class MainController {
 
     private void handleHBoxOnMouseMoved() {
         render_HBox.setOnMouseMoved(mouseEvent -> {
-            if (mousePrevX > mouseEvent.getX()) {
+
+            if (mousePrevX + 1 > mouseEvent.getX()) {
                 rotateRays(-1.2 * Math.PI / 180);
-            } else if (mousePrevX < mouseEvent.getX() && mousePrevX != -1) {
+            } else if (mousePrevX + 1 < mouseEvent.getX() && mousePrevX != -1) {
                 rotateRays(1.2 * Math.PI / 180);
             }
 
+            if (mousePrevY > mouseEvent.getY()) {
+                lookUpDown(4);
+            } else if (mousePrevY < mouseEvent.getY() && mousePrevY != -1) {
+                lookUpDown(-4);
+            }
+
             mousePrevX = mouseEvent.getX();
+            mousePrevY = mouseEvent.getY();
             renderRayIntersections();
             //TODO:: IMPLEMENT CAMERA SHEARING
         });
@@ -68,10 +76,22 @@ public class MainController {
 //            System.out.println(mouseEvent.getX() + ", " + mouseEvent.getY());
             if (mouseEvent.getX() < 0.1) {
                 moveCursor(1760, 400);
-            } else {
+            } else if (mouseEvent.getX() >= 790) {
                 moveCursor(960, 400);
+            } else if (mouseEvent.getY() < 0.1) {
+                moveCursor(1350, 540 + 400);
+            } else if (mouseEvent.getY() >= 790) {
+                moveCursor(1350, 540 - 400);
             }
         });
+    }
+
+    private void lookUpDown(double v) {
+//        AnchorPane.setTopAnchor(render_HBox, v + AnchorPane.getTopAnchor(render_HBox));
+        for (Node node : render_HBox.getChildren()) {
+            node.setTranslateY(node.getTranslateY() + v);
+        }
+//        render_HBox.setTranslateY(render_HBox.getTranslateY() + v);
     }
 
     public void moveCursor(int screenX, int screenY) {
@@ -169,6 +189,7 @@ public class MainController {
         for (int i = 0; i < numberOfRays; i++) {
             double angleFromCameraView = 2 * Math.PI * i / (6 * numberOfRays) - (Math.PI / 6);
             RayView rayView = new RayView(new Vector2D(0, 0), new Vector2D(Math.cos(angleFromCameraView), Math.sin(angleFromCameraView)), pane_width, angleFromCameraView);//250
+            rayView.translateStartEndPointsFromInitial(20, 20);
             anchor_pane.getChildren().add(rayView);
             rayViews.add(rayView);
         }
@@ -196,23 +217,29 @@ public class MainController {
         renderRayIntersections();
     }
 
+    boolean dummyFlag = true;
+    WallView boundaryWall;
+
     private void translateStartEndPointsRays(double x, double y) {
 
-//        for (int i = 0; i < rayViews.size(); i++) {
-//            RayView rayView = rayViews.get(i);
-
-//        RayView ray = new RayView(rayViews.get(0));
-//        ray.translateStartEndPoints(x, y);
-//
-//        for (WallView wallView : walls) {
-//            if (new WallView(ray.getStartX() - 5, ray.getStartY() - 5, 10, 10).hasAxisAlignedCollision(wallView)) {
-//                System.out.println("RETURNED");
-//                return;
-//            }
-//        }
+        if (dummyFlag) {
+            RayView ray = rayViews.get(0);
+            boundaryWall = new WallView(ray.getStartX() - 5, ray.getStartY() - 5, 10, 10);
+            boundaryWall.setFill(null);
+            anchor_pane.getChildren().add(boundaryWall);
+            dummyFlag = false;
+        }
         int i = 0;
         for (RayView rayView : rayViews) {
 //            RayView rayViewClone = new RayView(rayView);
+            boundaryWall.setX(rayView.getStartX() + x - 5);
+            boundaryWall.setY(rayView.getStartY() + y - 5);
+
+            for (WallView wall : walls) {
+                if (boundaryWall.hasAxisAlignedCollision(wall)) {
+                    return;
+                }
+            }
             rayView.translateStartEndPoints(x, y);
 //            System.out.println("Passed: " + rayView);
             rayViews.set(i, rayView);
